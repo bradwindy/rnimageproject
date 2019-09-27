@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, ScrollView} from 'react-native';
+import {StyleSheet, ScrollView} from 'react-native';
 import axios from 'axios';
-import {Button, Card, IconButton} from 'react-native-paper';
+import {Button, Card} from 'react-native-paper';
 
 class ImageList extends Component {
   constructor(props) {
@@ -36,7 +36,14 @@ class ImageList extends Component {
                 icon="info"
                 mode="text"
                 color="#cf363b"
-                onPress={() => console.log('Pressed')}>
+                onPress={() =>
+                  this.props.navFunc('Image', {
+                    displayImage: item.largeImageURL,
+                    downloadImage: item.imageURL,
+                    user: item.user,
+                    tags: item.tags,
+                  })
+                }>
                 Info
               </Button>
               <Button
