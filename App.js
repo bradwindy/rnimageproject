@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,8 +8,25 @@ import {
   StatusBar,
 } from 'react-native';
 
-export default function App() {
-  return <></>;
-}
+import {Provider as PaperProvider} from 'react-native-paper';
+import Header from './components/Header';
+import {Appbar} from 'react-native-paper';
+import ImageList from './components/ImageList';
 
-const styles = StyleSheet.create({});
+class App extends Component {
+  render() {
+    return (
+      <View>
+        <Header />
+        <ImageList />
+      </View>
+    );
+  }
+}
+const styles = StyleSheet.create({
+  list: {
+    margin: 100,
+  },
+});
+
+export default App;
