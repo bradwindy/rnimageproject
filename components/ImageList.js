@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, ScrollView, ToastAndroid} from 'react-native';
 import axios from 'axios';
-import {Button, Card} from 'react-native-paper';
+import {Button, Card, TouchableRipple} from 'react-native-paper';
 import RNFetchBlob from 'rn-fetch-blob';
 
 class ImageList extends Component {
@@ -30,10 +30,23 @@ class ImageList extends Component {
         contentContainerStyle={styles.listcont}>
         {this.state.images.map(item => (
           <Card style={styles.imgCard} key={item.id} elevation={3}>
-            <Card.Cover
-              style={styles.cover}
-              source={{uri: item.largeImageURL}}
-            />
+            <TouchableRipple
+              onPress={() =>
+                this.props.navFunc('Image', {
+                  displayImage: item.largeImageURL,
+                  downloadImage: item.imageURL,
+                  user: item.user,
+                  tags: item.tags,
+                  height: item.imageHeight,
+                  width: item.imageWidth,
+                })
+              }
+              rippleColor="rgba(0, 0, 0, .0)">
+              <Card.Cover
+                style={styles.cover}
+                source={{uri: item.largeImageURL}}
+              />
+            </TouchableRipple>
             <Card.Actions style={styles.actions}>
               <Button
                 style={styles.button}

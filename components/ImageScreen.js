@@ -33,13 +33,15 @@ class ImageScreen extends Component {
                 title={JSON.stringify(
                   navigation.getParam('user', 'default value'),
                 ).replace(/\"/g, '')}
-                left={() => <List.Icon icon="account-circle" />}
+                description="User"
+                left={() => <List.Icon icon="account-circle" color="#cf363b" />}
               />
               <List.Item
                 title={JSON.stringify(
                   navigation.getParam('tags', 'default value'),
                 ).replace(/\"/g, '')}
-                left={() => <List.Icon color="#000" icon="label" />}
+                description="Image Tags"
+                left={() => <List.Icon color="#cf363b" icon="label" />}
               />
               <List.Item
                 title={
@@ -51,8 +53,9 @@ class ImageScreen extends Component {
                     navigation.getParam('height', 'default value'),
                   ).replace(/\"/g, '')
                 }
+                description="Dimensions"
                 left={() => (
-                  <List.Icon color="#000" icon="photo-size-select-large" />
+                  <List.Icon icon="photo-size-select-large" color="#cf363b" />
                 )}
               />
             </List.Section>
