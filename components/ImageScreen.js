@@ -2,6 +2,23 @@ import React, {Component} from 'react';
 import {StyleSheet, View, ToastAndroid} from 'react-native';
 import {Card, List, Button} from 'react-native-paper';
 import RNFetchBlob from 'rn-fetch-blob';
+import WallPaperManager from 'react-native-wallpaper-enhanced';
+import {PermissionsAndroid} from 'react-native';
+
+async function requestStoragePermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Storage Access Required',
+        message: 'This App needs to access your storage to save images.',
+      },
+    );
+  } catch (err) {
+    alert('err', err);
+    console.warn(err);
+  }
+}
 
 class ImageScreen extends Component {
   static navigationOptions = {
@@ -14,6 +31,10 @@ class ImageScreen extends Component {
       fontWeight: 'bold',
     },
   };
+
+  componentDidMount() {
+    requestStoragePermission();
+  }
 
   render() {
     const {navigation} = this.props;
@@ -62,12 +83,28 @@ class ImageScreen extends Component {
             <Button
               icon="get-app"
               mode="contained"
-              onPress={() =>
+              onPress={() => {
                 RNFetchBlob.config({
                   fileCache: true,
+                  appendExt: 'jpg',
+                  path:
+                    RNFetchBlob.fs.dirs.DownloadDir +
+                    '/image' +
+                    JSON.stringify(
+                      navigation.getParam('id', 'default value'),
+                    ).replace(/\"/g, '') +
+                    '.jpg',
                   addAndroidDownloads: {
                     useDownloadManager: true,
+                    mediaScannable: true,
                     notification: true,
+                    path:
+                      RNFetchBlob.fs.dirs.DownloadDir +
+                      '/image' +
+                      JSON.stringify(
+                        navigation.getParam('id', 'default value'),
+                      ).replace(/\"/g, '') +
+                      '.jpg',
                     title: 'Wallpaper Finder Image Download',
                     description: 'File downloaded by download manager.',
                   },
@@ -78,11 +115,32 @@ class ImageScreen extends Component {
                       navigation.getParam('displayImage', 'default value'),
                     ).replace(/\"/g, ''),
                   )
-                  .then(() => {
+                  .then(res => {
                     ToastAndroid.show('Downloading', ToastAndroid.SHORT);
-                  })
-              }>
+                    // the temp file path with file extension `png`
+                    console.log('The file saved to ', res.path());
+                    // Beware that when using a file path as Image source on Android,
+                    // you must prepend "file://"" before the file path
+                  });
+              }}>
               Download
+            </Button>
+            <Button
+              icon="wallpaper"
+              mode="contained"
+              style={styles.setWallButton}
+              onPress={() =>
+                WallPaperManager.setWallpaper(
+                  {
+                    uri: JSON.stringify(
+                      navigation.getParam('displayImage', 'default value'),
+                    ).replace(/\"/g, ''),
+                  },
+                  res =>
+                    ToastAndroid.show('Wallpaper Set!', ToastAndroid.SHORT),
+                )
+              }>
+              Set Wallpaper
             </Button>
           </Card.Content>
         </Card>
@@ -94,6 +152,9 @@ class ImageScreen extends Component {
 const styles = StyleSheet.create({
   imageinfocard: {
     margin: 15,
+  },
+  setWallButton: {
+    marginTop: 10,
   },
 });
 
