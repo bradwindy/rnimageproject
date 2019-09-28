@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, ScrollView} from 'react-native';
+import {StyleSheet, ScrollView, ToastAndroid} from 'react-native';
 import axios from 'axios';
 import {Button, Card} from 'react-native-paper';
+import RNFetchBlob from 'rn-fetch-blob';
 
 class ImageList extends Component {
   constructor(props) {
@@ -28,8 +29,11 @@ class ImageList extends Component {
         style={styles.scrollView}
         contentContainerStyle={styles.listcont}>
         {this.state.images.map(item => (
-          <Card style={styles.imgCard} key={item.id}>
-            <Card.Cover source={{uri: item.largeImageURL}} />
+          <Card style={styles.imgCard} key={item.id} elevation={3}>
+            <Card.Cover
+              style={styles.cover}
+              source={{uri: item.largeImageURL}}
+            />
             <Card.Actions style={styles.actions}>
               <Button
                 style={styles.button}
@@ -42,17 +46,33 @@ class ImageList extends Component {
                     downloadImage: item.imageURL,
                     user: item.user,
                     tags: item.tags,
+                    height: item.imageHeight,
+                    width: item.imageWidth,
                   })
                 }>
                 Info
               </Button>
               <Button
                 style={styles.button}
-                icon="save"
+                icon="get-app"
                 mode="text"
                 color="#cf363b"
-                onPress={() => console.log('Pressed')}>
-                Save
+                onPress={() => {
+                  RNFetchBlob.config({
+                    fileCache: true,
+                    addAndroidDownloads: {
+                      useDownloadManager: true,
+                      notification: true,
+                      title: 'Wallpaper Finder Image Download',
+                      description: 'File downloaded by download manager.',
+                    },
+                  })
+                    .fetch('GET', item.largeImageURL)
+                    .then(() => {
+                      ToastAndroid.show('Downloading', ToastAndroid.SHORT);
+                    });
+                }}>
+                Download
               </Button>
             </Card.Actions>
           </Card>
